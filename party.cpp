@@ -54,8 +54,8 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
-#define TABLE_FILE "party.table"
-#define TABLE_FILE_2 "./state/party.table" // if TABLE_FILE can't be found try here
+#define TABLE_FILE "./state/party.table"
+#define TABLE_FILE_2 "party.table" // if TABLE_FILE can't be found try here
 
 // std::string contains binary 32 byte key (hacky)
 std::map<std::string, std::pair<FILE*, FILE*>> users;
@@ -189,6 +189,14 @@ void open_table() {
         table = fopen(TABLE_FILE_2, "rb+");
 
     if (!table) {
+    
+        FILE* f = fopen(TABLE_FILE, "a");
+        if (f) {
+            fclose(f);
+            open_table();
+            return;
+        }
+
         fprintf(stderr, "could not open %s or %s\n", TABLE_FILE, TABLE_FILE_2);
         exit( 128 );
     }
